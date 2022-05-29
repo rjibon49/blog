@@ -8,7 +8,6 @@ exports.signup = (req, res) => {
     // res.json({
     //     user: {name, email, password}
     // })
-
     User.findOne({email: req.body.email}).exec((err, user) => {
         if(user) {
             return res.status(400).json({
@@ -17,6 +16,8 @@ exports.signup = (req, res) => {
         }
 
       const {name, email, password} = req.body;
+      console.dir(req.body)
+
       let username = shortId.generate();
       let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 
@@ -27,12 +28,12 @@ exports.signup = (req, res) => {
                   error: err
               })
           }
-        //   res.json({
-        //       user: success
-        //   });
           res.json({
-              message: 'Signup success! Please signin.'
-          })
+              user: success
+          });
+        //   res.json({
+        //       message: 'Signup success! Please signin.'
+        //   })
       })
     });
 };
@@ -80,8 +81,8 @@ exports.signout = (req, res) => {
 //     secret: process.env.JWT_SECRET
 // });
 
-exports.requireSignin = expressJwt({
-    secret: process.env.JWT_SECRET,
-    algorithms: ["HS256"], // added later
-    userProperty: "auth",
-  });
+// exports.requireSignin = expressJwt({
+//     secret: process.env.JWT_SECRET,
+//     algorithms: ["HS256"], // added later
+//     userProperty: "auth",
+//   });
