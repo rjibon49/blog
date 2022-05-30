@@ -8,7 +8,7 @@ const {signup, signin, signout} = require('../controllers/auth')
 const {runValidation} = require('../Validators')
 const {userSignupValidator, userSigninValidator} = require('../Validators/auth')
 
-router.post('/signup', userSignupValidator, runValidation, signup);
+router.post('/fwfasignup', userSignupValidator, runValidation, signup);
 router.post('/signin', userSigninValidator, runValidation, signin);
 router.get('/signout', signout);
 
