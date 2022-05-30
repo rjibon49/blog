@@ -1,7 +1,7 @@
 const User = require('../models/user')
 const shortId = require('shortid')
 const jwt = require('jsonwebtoken')
-const expressJwt = require('express-jwt')
+const { expressjwt: jwtt } = require("express-jwt");
 
 exports.signup = (req, res) => {
     // const {name, email, password} = req.body
@@ -16,7 +16,7 @@ exports.signup = (req, res) => {
         }
 
       const {name, email, password} = req.body;
-      console.dir(req.body)
+      console.log(name, email, password)
 
       let username = shortId.generate();
       let profile = `${process.env.CLIENT_URL}/profile/${username}`;
@@ -57,9 +57,9 @@ exports.signin = (req, res) => {
             });
         }
         // Genarate a token and send to client
-        const token = jwt.sign({_id: user._id }, process.env.JWT_SECRET, {expiresIn: '1d'});
+        const token = jwt.sign({_id: user._id }, process.env.JWT_SECRET, {expiresIn: '7d'});
 
-        res.cookie('token', token, {expiresIn: '1d'})
+        res.cookie('token', token, {expiresIn: '7d'})
         const {_id, username, name, email, role} = user;
         return res.json({
             token,
@@ -81,8 +81,13 @@ exports.signout = (req, res) => {
 //     secret: process.env.JWT_SECRET
 // });
 
-// exports.requireSignin = expressJwt({
-//     secret: process.env.JWT_SECRET,
-//     algorithms: ["HS256"], // added later
-//     userProperty: "auth",
-//   });
+exports.requireSignin = jwtt({
+    secret: process.env.JWT_SECRET,
+    // algorithms: ["HS256"], // added later
+    // function (req, res) {
+    //     if (!req.auth) return res.sendStatus(401);
+    //     res.sendStatus(200);
+    //   }
+    userProperty: "auth",
+    algorithms: ["HS256"]
+  });
