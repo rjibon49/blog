@@ -3,6 +3,9 @@ const shortId = require('shortid')
 const jwt = require('jsonwebtoken')
 const { expressjwt: jwtt } = require("express-jwt");
 
+
+// Create Signup request
+
 exports.signup = (req, res) => {
     // const {name, email, password} = req.body
     // res.json({
@@ -38,6 +41,7 @@ exports.signup = (req, res) => {
     });
 };
 
+// Create Signin request
 
 exports.signin = (req, res) => {
 
@@ -69,6 +73,7 @@ exports.signin = (req, res) => {
     
 };
 
+// Create Signout request
 
 exports.signout = (req, res) => {
     res.clearCookie("token")
@@ -91,3 +96,40 @@ exports.requireSignin = jwtt({
     userProperty: "auth",
     algorithms: ["HS256"]
   });
+
+
+  // Auth Middleware
+
+  exports.authMiddleware = (req, res, next) => {
+      const authUserId = req.user._id;
+      User.findById({_id: authUserId}).exec((err, user) => {
+          if(err || !user) {
+              return res.status(400).json({
+                  error: 'User not found'
+              });
+          }
+          req.profile = user;
+          next();
+      });
+  };
+
+  // Admin Middleware
+ 
+  exports.adminMiddleware = (req, res, next) => {
+      const adminUserId = req.user._id;
+      User.findById({_id: adminUserId}).exec((err, user) => {
+          if(err || !user) {
+              return res.status(400).json({
+                  error: 'User not found'
+              });
+          }
+
+          if(user.role !== 1) {
+            return res.status(400).json({
+                error: 'Admin Resource Access Denied'
+            });
+          }
+          req.profile = user;
+          next();
+      });
+  };
